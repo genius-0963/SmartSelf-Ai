@@ -10,13 +10,14 @@ import os
 from pathlib import Path
 
 # Add backend to path for imports
-sys.path.append(str(Path(__file__).parent.parent / "backend"))
+backend_path = Path(__file__).parent.parent / "backend"
+sys.path.insert(0, str(backend_path))
 
+from app.database import engine, SessionLocal, create_tables, get_database_stats
+from app.database import Product, Sale, InventoryRecord, CompetitorPrice
+from datetime import datetime, timedelta
 import pandas as pd
 from sqlalchemy.orm import Session
-from backend.app.database import engine, SessionLocal, create_tables, get_database_stats
-from backend.app.database import Product, Sale, InventoryRecord, CompetitorPrice
-from datetime import datetime, timedelta
 
 
 def load_products_from_csv(db: Session, csv_path: str) -> int:
@@ -161,7 +162,7 @@ def create_sample_forecasts(db: Session) -> int:
             predicted_demand = base_demand * (1 + 0.1 * (days_ahead % 7))  # Weekly pattern
             confidence = 0.85 + 0.1 * (1 - days_ahead / 30)  # Confidence decreases over time
             
-            from backend.app.database import Forecast
+            from app.database import Forecast
             forecast = Forecast(
                 product_id=product.id,
                 sku=product.sku,
@@ -188,7 +189,7 @@ def create_sample_alerts(db: Session) -> int:
     print("🚨 Creating sample alerts...")
     
     # Get products with low stock
-    from backend.app.database import InventoryRecord, InventoryAlert
+    from app.database import InventoryRecord, InventoryAlert
     
     low_stock_products = db.query(InventoryRecord).filter(
         InventoryRecord.stock_level_after < 10,
@@ -227,6 +228,11 @@ def main():
     # Create database directory if it doesn't exist
     db_dir = Path("data/database")
     db_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Drop existing tables and recreate
+    print("🗑️  Clearing existing database...")
+    from app.database import drop_tables
+    drop_tables()
     
     # Create database tables
     print("📋 Creating database tables...")
