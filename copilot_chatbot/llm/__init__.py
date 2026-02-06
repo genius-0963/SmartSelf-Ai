@@ -6,5 +6,6 @@ Large Language Model client implementations.
 
 from .base import LLMClientBase
 from .openai_client import OpenAIClient
+from .claude_client import ClaudeClient
 
-__all__ = ['LLMClientBase', 'OpenAIClient']
+__all__ = ['LLMClientBase', 'OpenAIClient', 'ClaudeClient']
