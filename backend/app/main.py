@@ -13,7 +13,7 @@ import time
 from typing import Dict, Any
 
 from .database import engine, create_tables, get_database_stats
-from .api.v1 import data, forecast, pricing, inventory, analytics, copilot
+from .api.v1 import data, forecast, pricing, inventory, analytics, copilot, nlp, competitors
 from .core.exceptions import SmartShelfException
 from .core.logging import setup_logging
 
@@ -90,6 +90,8 @@ app.include_router(pricing.router, prefix="/api/v1/pricing", tags=["Pricing Opti
 app.include_router(inventory.router, prefix="/api/v1/inventory", tags=["Inventory Intelligence"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics Dashboard"])
 app.include_router(copilot.router, prefix="/api/v1/copilot", tags=["AI Copilot"])
+app.include_router(nlp.router, prefix="/api/v1/nlp", tags=["NLP"])
+app.include_router(competitors.router, prefix="/api/v1/competitors", tags=["Competitors"])
 
 
 # Root endpoint

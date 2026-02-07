@@ -9,6 +9,7 @@ from .sales import *
 from .forecast import *
 from .inventory import *
 from .copilot import *
+from .reviews import *
 
 __all__ = [
     # Product models
@@ -25,4 +26,8 @@ __all__ = [
     
     # Copilot models
     'ChatMessage', 'ChatRequest', 'ChatResponse', 'ChatSession',
+
+    # Reviews models
+    'ReviewBase', 'ReviewCreate', 'ReviewResponse', 'ReviewImportResponse',
+    'SentimentRequest', 'ParseRequest', 'SemanticSearchRequest',
 ]

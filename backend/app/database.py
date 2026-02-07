@@ -74,6 +74,7 @@ class Product(Base):
     inventory_records = relationship("InventoryRecord", back_populates="product")
     forecasts = relationship("Forecast", back_populates="product")
     competitor_prices = relationship("CompetitorPrice", back_populates="product")
+    reviews = relationship("CustomerReview", back_populates="product")
     
     # Indexes for performance
     __table_args__ = (
@@ -195,6 +196,29 @@ class CompetitorPrice(Base):
         Index('idx_competitor_product', 'product_id', 'competitor'),
         Index('idx_competitor_price_diff', 'price_difference_percent'),
         Index('idx_competitor_updated', 'last_updated'),
+    )
+
+
+class CustomerReview(Base):
+    """Customer reviews and feedback table."""
+    __tablename__ = "customer_reviews"
+
+    id = Column(Integer, primary_key=True, index=True)
+    product_id = Column(Integer, ForeignKey("products.id"), index=True, nullable=True)
+    sku = Column(String(50), index=True)
+    source = Column(String(50), index=True, default="reviews")  # 'reviews', 'surveys', 'social_media', 'support'
+    review_text = Column(Text, nullable=False)
+    rating = Column(Integer, index=True)  # 1-5 if available
+    sentiment_label = Column(String(20), index=True)  # optional cached label
+    sentiment_score = Column(Float)  # optional cached score
+    review_date = Column(DateTime, index=True, default=datetime.utcnow)
+    created_date = Column(DateTime, default=datetime.utcnow)
+
+    product = relationship("Product", back_populates="reviews")
+
+    __table_args__ = (
+        Index('idx_reviews_product_date', 'product_id', 'review_date'),
+        Index('idx_reviews_source_date', 'source', 'review_date'),
     )
 
 
