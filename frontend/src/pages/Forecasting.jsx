@@ -27,58 +27,58 @@ export default function Forecasting() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Demand Forecasting</h1>
-        <p className="text-gray-600">AI-powered demand predictions and insights</p>
+        <h1 className="text-2xl font-bold text-foreground">Demand Forecasting</h1>
+        <p className="text-muted-foreground">AI-powered demand predictions and insights</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-card border border-border p-6 rounded-lg">
           <div className="flex items-center space-x-3 mb-4">
-            <Target className="w-6 h-6 text-blue-600" />
-            <h3 className="font-semibold">Forecast Accuracy</h3>
+            <Target className="w-6 h-6 text-green-400" />
+            <h3 className="font-semibold text-foreground">Forecast Accuracy</h3>
           </div>
-          <p className="text-2xl font-bold text-gray-900">87%</p>
-          <p className="text-sm text-gray-600">Average across all products</p>
+          <p className="text-2xl font-bold text-foreground">87%</p>
+          <p className="text-sm text-muted-foreground">Average across all products</p>
         </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow">
+
+        <div className="bg-card border border-border p-6 rounded-lg">
           <div className="flex items-center space-x-3 mb-4">
-            <TrendingUp className="w-6 h-6 text-green-600" />
-            <h3 className="font-semibold">Growth Prediction</h3>
+            <TrendingUp className="w-6 h-6 text-green-400" />
+            <h3 className="font-semibold text-foreground">Growth Prediction</h3>
           </div>
-          <p className="text-2xl font-bold text-gray-900">+15%</p>
-          <p className="text-sm text-gray-600">Expected next month</p>
+          <p className="text-2xl font-bold text-foreground">+15%</p>
+          <p className="text-sm text-muted-foreground">Expected next month</p>
         </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow">
+
+        <div className="bg-card border border-border p-6 rounded-lg">
           <div className="flex items-center space-x-3 mb-4">
-            <Calendar className="w-6 h-6 text-purple-600" />
-            <h3 className="font-semibold">Forecast Horizon</h3>
+            <Calendar className="w-6 h-6 text-green-400" />
+            <h3 className="font-semibold text-foreground">Forecast Horizon</h3>
           </div>
-          <p className="text-2xl font-bold text-gray-900">30</p>
-          <p className="text-sm text-gray-600">Days ahead</p>
+          <p className="text-2xl font-bold text-foreground">30</p>
+          <p className="text-sm text-muted-foreground">Days ahead</p>
         </div>
       </div>
 
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Forecasts</h2>
+      <div className="bg-card border border-border rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Product Forecasts</h2>
         <div className="space-y-4">
           {forecasts.map(forecast => (
-            <div key={forecast.id} className="border rounded-lg p-4">
+            <div key={forecast.id} className="border border-border rounded-lg p-4 hover:border-green-500/30 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium text-gray-900">{forecast.product}</h3>
+                  <h3 className="font-medium text-foreground">{forecast.product}</h3>
                   <div className="flex items-center space-x-4 mt-2">
-                    <span className="text-sm text-gray-600">Current: {forecast.current}</span>
-                    <span className="text-sm text-gray-600">Predicted: {forecast.predicted}</span>
-                    <span className="text-sm text-gray-600">Confidence: {forecast.confidence}%</span>
+                    <span className="text-sm text-muted-foreground">Current: {forecast.current}</span>
+                    <span className="text-sm text-muted-foreground">Predicted: {forecast.predicted}</span>
+                    <span className="text-sm text-green-400">Confidence: {forecast.confidence}%</span>
                   </div>
                 </div>
                 <div className="text-right">
                   <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${
-                    forecast.trend === 'up' ? 'bg-green-100 text-green-800' :
-                    forecast.trend === 'down' ? 'bg-red-100 text-red-800' :
-                    'bg-gray-100 text-gray-800'
+                    forecast.trend === 'up' ? 'bg-green-500/15 text-green-200 border border-green-500/20' :
+                    forecast.trend === 'down' ? 'bg-red-500/15 text-red-200 border border-red-500/20' :
+                    'bg-gray-500/15 text-gray-200 border border-gray-500/20'
                   }`}>
                     {forecast.trend}
                   </span>
