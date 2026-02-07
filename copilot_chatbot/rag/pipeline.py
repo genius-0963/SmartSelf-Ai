@@ -14,6 +14,11 @@ from ..llm.base import LLMClientBase
 from .document_processor import DocumentProcessor
 from .context_retriever import ContextRetriever
 from ..config import RAGConfig
+from ..nlp.intent_engine import NLPIntentEngine
+from ..nlp.semantic_search import SemanticSearchEngine
+from ..nlp.multilingual import MultiLingualProcessor
+from ..nlp.sentiment_analyzer import SentimentAnalyzer
+from ..nlp.report_generator import ReportGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +51,11 @@ class RAGPipeline:
         # Initialize components
         self.document_processor = DocumentProcessor()
         self.context_retriever = ContextRetriever(vector_store, config)
+        self.intent_engine = NLPIntentEngine()
+        self.semantic_search = SemanticSearchEngine()
+        self.multilingual = MultiLingualProcessor()
+        self.sentiment = SentimentAnalyzer()
+        self.report_generator = ReportGenerator()
         
         # Conversation history (in production, use Redis or database)
         self.conversation_history = {}
@@ -70,21 +80,48 @@ class RAGPipeline:
         start_time = datetime.utcnow()
         
         try:
-            # Step 1: Retrieve relevant context
+            # NLP Step 0: language detection + translation
+            lang_info = self.multilingual.detect_language(query)
+            translated = self.multilingual.translate_to_english(query, source_language=lang_info.get("language"))
+            working_query = translated.get("translated_text", query)
+            
+            # NLP Step 1: intent + entity parsing
+            conversation_context = self._get_conversation_context(session_id)
+            intent_result = await self.intent_engine.parse_query(working_query, conversation_context)
+            
+            # Step 2: Retrieve relevant context (RAG)
             context_docs = await self.context_retriever.retrieve_context(
-                query,
+                working_query,
                 max_results=self.config.max_context_docs
             )
             
-            # Step 2: Build conversation context
-            conversation_context = self._get_conversation_context(session_id)
+            # Step 2b: semantic product search when relevant
+            semantic_products: Optional[Dict[str, Any]] = None
+            if intent_result.primary_intent.value in [
+                "product_recommendation",
+                "pricing_strategy",
+                "check_inventory",
+            ]:
+                semantic_products = self.semantic_search.semantic_product_search(
+                    working_query,
+                    filters={"in_stock": True},
+                    top_k=5,
+                )
             
             # Step 3: Generate response
             response = await self.llm_client.generate_response(
-                query=query,
+                query=working_query,
                 context=context_docs,
                 conversation_context=conversation_context
             )
+
+            # Step 3b: optional sentiment analysis demo hook (only if query asks)
+            sentiment_summary: Optional[Dict[str, Any]] = None
+            if intent_result.primary_intent.value == "customer_sentiment" or any(
+                e.type.value in ["product", "category"] for e in intent_result.entities
+            ) and any(w in working_query.lower() for w in ["review", "feedback", "sentiment", "complain", "complaint"]):
+                # No review datastore wired yet; keep as empty placeholder.
+                sentiment_summary = self.sentiment.analyze_texts([], aspect_level=True)
             
             # Step 4: Update conversation history
             if session_id:
@@ -111,7 +148,30 @@ class RAGPipeline:
                     "context_docs_count": len(context_docs),
                     "model_used": self.llm_client.model_name,
                     "tokens_used": response.get("tokens_used", 0),
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "nlp": {
+                        "language": lang_info,
+                        "translated_to_english": translated.get("source_language") != "en",
+                        "intent": {
+                            "primary_intent": intent_result.primary_intent.value,
+                            "secondary_intents": [i.value for i in intent_result.secondary_intents],
+                            "confidence": intent_result.confidence,
+                            "query_type": intent_result.query_type,
+                            "disambiguation_needed": intent_result.disambiguation_needed,
+                            "required_functions": intent_result.required_functions,
+                        },
+                        "entities": [
+                            {
+                                "type": e.type.value,
+                                "value": e.value,
+                                "normalized_value": e.normalized_value,
+                                "confidence": e.confidence,
+                            }
+                            for e in intent_result.entities
+                        ],
+                        "semantic_products": semantic_products,
+                        "sentiment_summary": sentiment_summary,
+                    },
                 },
                 "suggested_questions": self._generate_suggested_questions(query, response),
                 "related_topics": self._extract_related_topics(context_docs)
