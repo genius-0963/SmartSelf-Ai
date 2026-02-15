@@ -1,15 +1,15 @@
-# 🚀 SMARTSHELF AI - Design Document
-## *Retail Intelligence Platform for the Modern Era*
+# 🚀 SMARTSHELF AI - Production Design Document
+## *Enterprise-Grade Retail Intelligence Platform Architecture*
 
 ---
 
 ## 📋 Executive Summary
 
-**SmartShelf AI** is a revolutionary retail intelligence platform that democratizes advanced analytics for small and medium retailers. By combining cutting-edge machine learning, conversational AI, and an intuitive dark-themed interface, we're empowering the backbone of commerce to make data-driven decisions that were once exclusive to Fortune 500 companies.
+**SmartShelf AI** is a production-ready enterprise retail intelligence platform that combines cutting-edge machine learning, conversational AI, and real-time analytics to transform retail operations at scale. This comprehensive design document outlines the architecture, implementation details, and operational considerations for a system serving 10,000+ retail stores with 99.9% uptime requirements.
 
-**Mission**: *Transform every small retailer into a data-powered enterprise*
-
-**Vision**: *Become the operating system for retail decision-making*
+**Mission**: *Democratize enterprise-grade retail intelligence for businesses of all sizes*
+**Vision**: *Become the global operating system for data-driven retail decision-making*
+**Scale Target**: $50M ARR within 3 years, serving 10,000+ retailers globally
 
 ---
 
@@ -63,83 +63,265 @@ Market Positioning Matrix
 4. **Explainable AI** - Every recommendation backed by transparent reasoning
 5. **Progressive Enhancement** - Works offline, gets smarter with data
 
-### High-Level Architecture
+### Production System Architecture
 
 ```mermaid
 graph TB
-    subgraph "Client Layer"
-        A[React Dashboard] --> B[AI Copilot Chat]
-        A --> C[Mobile Responsive UI]
+    subgraph "Global Edge Layer"
+        A[Cloudflare CDN]
+        B[AWS CloudFront]
+        C[Azure Front Door]
+        D[DDoS Protection]
     end
     
-    subgraph "API Gateway"
-        D[Nginx + Rate Limiting]
+    subgraph "Application Load Balancing"
+        E[Global Load Balancer]
+        F[Regional Load Balancers]
+        G[API Gateway Kubernetes Ingress]
     end
     
-    subgraph "Microservices"
-        E[FastAPI Backend]
-        F[AI Copilot Service]
-        G[ML Pipeline Service]
+    subgraph "Kubernetes Cluster - Multi-Region"
+        subgraph "Frontend Services"
+            H[React Pods - 3 replicas]
+            I[Static Assets - CDN]
+            J[PWA Service Workers]
+        end
+        
+        subgraph "Backend Microservices"
+            K[Auth Service - 3 replicas]
+            L[Core API - 5 replicas]
+            M[AI Copilot - 3 replicas]
+            N[ML Pipeline - 2 replicas]
+            O[Notification Service - 2 replicas]
+        end
+        
+        subgraph "Data Services"
+            P[API Gateway - 3 replicas]
+            Q[GraphQL Gateway - 2 replicas]
+            R[WebSocket Service - 2 replicas]
+        end
     end
     
-    subgraph "Data Layer"
-        H[PostgreSQL]
-        I[ChromaDB Vector Store]
-        J[Redis Cache]
-        K[File Storage]
+    subgraph "Data Layer - Multi-AZ"
+        subgraph "Primary Database"
+            S[PostgreSQL Cluster - Primary]
+            T[PostgreSQL - Read Replicas]
+            U[Aurora Global]
+        end
+        
+        subgraph "Vector & Cache"
+            V[ChromaDB Cluster]
+            W[Redis Cluster]
+            X[Elasticsearch Cluster]
+        end
+        
+        subgraph "Storage & Messaging"
+            Y[S3 Buckets - Multi-region]
+            Z[Kafka Cluster]
+            AA[RabbitMQ]
+        end
     end
     
-    subgraph "External APIs"
-        L[OpenAI/Claude]
-        M[Payment Gateway]
-        N[Email Service]
+    subgraph "External Services"
+        AB[OpenAI API]
+        AC[Claude API]
+        AD[DeepSeek API]
+        AE[Stripe API]
+        AF[SendGrid API]
+        AG[Twilio API]
     end
     
-    A --> D
-    B --> D
+    subgraph "Monitoring & Observability"
+        AH[Prometheus Cluster]
+        AI[Grafana Dashboards]
+        AJ[Datadog APM]
+        AK[ELK Stack]
+        AL[Jaeger Tracing]
+    end
+    
+    A --> E
+    B --> E
+    C --> E
     D --> E
-    D --> F
-    D --> G
-    E --> H
-    E --> J
-    F --> I
-    F --> L
-    G --> K
+    E --> F
+    F --> G
     G --> H
+    G --> K
+    G --> L
+    G --> M
+    G --> N
+    G --> O
+    L --> S
+    L --> W
+    M --> V
+    M --> AB
+    M --> AC
+    M --> AD
+    N --> Y
+    N --> Z
+    O --> AF
+    O --> AG
+    K --> T
+    P --> S
+    P --> V
+    P --> W
+    Q --> S
+    Q --> V
+    R --> AA
+    AH --> L
+    AH --> M
+    AH --> N
+    AI --> AH
+    AJ --> L
+    AJ --> M
+    AJ --> N
+    AK --> S
+    AK --> V
+    AK --> W
+    AL --> L
+    AL --> M
+    AL --> N
 ```
 
-### Microservices Design
+### Production Microservices Architecture
 
-| Service | Responsibility | Tech Stack | Response Time |
-|---------|----------------|------------|---------------|
-| **API Gateway** | Load balancing, SSL termination | Nginx | <10ms |
-| **Core API** | CRUD operations, business logic | FastAPI + SQLAlchemy | <100ms |
-| **AI Copilot** | RAG pipeline, LLM integration | FastAPI + ChromaDB | <500ms |
-| **ML Pipeline** | Model training, inference | Python + PyTorch | <200ms |
-| **Notification Service** | Email, SMS, push alerts | Celery + Redis | Async |
+```mermaid
+graph TB
+    subgraph "Service Mesh - Istio"
+        A[Ingress Gateway]
+        B[Sidecar Proxies]
+        C[Service Discovery]
+        D[Circuit Breakers]
+    end
+    
+    subgraph "Core Business Services"
+        E[User Management Service]
+        F[Tenant Management Service]
+        G[Product Catalog Service]
+        H[Inventory Service]
+        I[Order Management Service]
+        J[Pricing Service]
+    end
+    
+    subgraph "AI & Analytics Services"
+        K[AI Copilot Service]
+        L[Demand Forecasting Service]
+        M[Price Optimization Service]
+        N[Sentiment Analysis Service]
+        O[Recommendation Service]
+    end
+    
+    subgraph "Platform Services"
+        P[Notification Service]
+        Q[File Upload Service]
+        R[Report Generation Service]
+        S[Audit Logging Service]
+        T[Configuration Service]
+    end
+    
+    subgraph "Integration Services"
+        U[POS Integration Service]
+        V[Payment Gateway Service]
+        W[Email Service]
+        X[SMS Service]
+        Y[Webhook Service]
+    end
+    
+    A --> E
+    A --> F
+    A --> G
+    A --> H
+    A --> I
+    A --> J
+    A --> K
+    A --> L
+    A --> M
+    A --> N
+    A --> O
+    A --> P
+    A --> Q
+    A --> R
+    A --> S
+    A --> T
+    A --> U
+    A --> V
+    A --> W
+    A --> X
+    A --> Y
+    
+    E --> C
+    F --> C
+    G --> C
+    H --> C
+    I --> C
+    J --> C
+    K --> C
+    L --> C
+    M --> C
+    N --> C
+    O --> C
+    P --> C
+    Q --> C
+    R --> C
+    S --> C
+    T --> C
+    U --> C
+    V --> C
+    W --> C
+    X --> C
+    Y --> C
+```
 
 ---
 
 ## 🤖 AI Copilot - The Game Changer
 
-### RAG (Retrieval Augmented Generation) Architecture
+### Production AI Copilot Architecture
 
 ```mermaid
 sequenceDiagram
-    participant U as User
-    participant C as Copilot Service
-    participant V as Vector Store
-    participant L as LLM Service
-    participant D as Database
+    participant U as User Interface
+    participant AG as API Gateway
+    participant AC as AI Copilot Service
+    participant VS as Vector Store (ChromaDB)
+ participant LLM as LLM Provider Pool
+    participant DB as PostgreSQL
+    participant Cache as Redis Cache
+    participant Monitor as Observability
     
-    U->>C: "Why are sales down for Product X?"
-    C->>V: Semantic Search for "Product X sales"
-    V->>C: Relevant docs + embeddings
-    C->>D: Fetch sales history + inventory
-    D->>C: Time series data + stock levels
-    C->>L: Context + System Prompt + Query
-    L->>C: Generated response + citations
-    C->>U: "Sales down 15% due to stockouts on Tuesdays..."
+    U->>AG: Natural Language Query
+    AG->>AC: Forward Request (with auth)
+    AC->>Monitor: Log Query Start
+    
+    AC->>Cache: Check Semantic Cache
+    alt Cache Hit
+        Cache->>AC: Return Cached Response
+        AC->>AG: Cached Response
+        AG->>U: Fast Response (<100ms)
+    else Cache Miss
+        AC->>VS: Semantic Search (top_k=10)
+        VS->>AC: Relevant Documents + Scores
+        
+        AC->>DB: Fetch Real-time Context
+        DB->>AC: Business Data + History
+        
+        AC->>LLM: Construct Prompt + Context
+        
+        alt Primary LLM Available
+            LLM->>AC: Generated Response
+        else Fallback to Secondary
+            LLM->>AC: Fallback Response
+        end
+        
+        AC->>Monitor: Log Performance Metrics
+        AC->>Cache: Store Response (TTL=1hr)
+        AC->>AG: Formatted Response + Citations
+        AG->>U: Intelligent Response (<2s)
+    end
+    
+    U->>AG: Feedback (thumbs up/down)
+    AG->>AC: Store Feedback
+    AC->>Monitor: Log Quality Metrics
 ```
 
 ### Knowledge Base Structure
@@ -177,21 +359,87 @@ Retail Knowledge Graph
 
 ## 📊 Machine Learning Pipeline
 
-### Forecasting Model Ensemble
+### Production ML Pipeline Architecture
 
 ```mermaid
-graph LR
-    A[Raw Sales Data] --> B[Data Preprocessing]
-    B --> C[Feature Engineering]
-    C --> D[Prophet Model]
-    C --> E[LSTM Network]
-    C --> F[XGBoost Regressor]
-    D --> G[Ensemble Layer]
-    E --> G
+graph TB
+    subgraph "Data Ingestion Layer"
+        A[POS Systems]
+        B[CSV/Excel Uploads]
+        C[API Integrations]
+        D[IoT Sensors]
+        E[Webhooks]
+    end
+    
+    subgraph "Stream Processing"
+        F[Kafka Topics]
+        G[Apache Flink]
+        H[Data Validation]
+        I[Schema Registry]
+    end
+    
+    subgraph "Feature Store"
+        J[Real-time Features]
+        K[Batch Features]
+        L[Feature Engineering]
+        M[Feature Monitoring]
+    end
+    
+    subgraph "Model Training Pipeline"
+        N[Automated Training]
+        O[Hyperparameter Tuning]
+        P[Model Registry]
+        Q[A/B Testing]
+        R[Model Validation]
+    end
+    
+    subgraph "Inference Layer"
+        S[Online Prediction]
+        T[Batch Prediction]
+        U[Model Serving]
+        V[Latency Monitoring]
+    end
+    
+    subgraph "ML Operations"
+        W[Model Monitoring]
+        X[Drift Detection]
+        Y[Automated Retraining]
+        Z[Explainability]
+    end
+    
+    A --> F
+    B --> F
+    C --> F
+    D --> F
+    E --> F
+    
     F --> G
-    G --> H[Confidence Intervals]
-    H --> I[Business Rules]
-    I --> J[Final Forecast]
+    G --> H
+    H --> I
+    I --> J
+    I --> K
+    
+    J --> L
+    K --> L
+    L --> M
+    
+    J --> N
+    K --> N
+    N --> O
+    O --> P
+    P --> Q
+    Q --> R
+    
+    P --> S
+    P --> T
+    S --> U
+    T --> U
+    U --> V
+    
+    U --> W
+    W --> X
+    X --> Y
+    Y --> Z
 ```
 
 ### Model Performance Metrics
@@ -354,65 +602,171 @@ Day 3: Full Feature Access
 
 ## 🔧 Technical Implementation Details
 
-### Database Schema Design
+### Production Database Architecture
 
-```sql
--- Core Product Table
-CREATE TABLE products (
-    id UUID PRIMARY KEY,
-    sku VARCHAR(50) UNIQUE NOT NULL,
-    name VARCHAR(200) NOT NULL,
-    category_id UUID REFERENCES categories(id),
-    cost DECIMAL(10,2),
-    price DECIMAL(10,2),
-    supplier_id UUID REFERENCES suppliers(id),
-    reorder_point INTEGER,
-    safety_stock INTEGER,
-    lead_time_days INTEGER,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- Time Series Sales Data
-CREATE TABLE sales_transactions (
-    id UUID PRIMARY KEY,
-    product_id UUID REFERENCES products(id),
-    quantity INTEGER NOT NULL,
-    unit_price DECIMAL(10,2),
-    total_amount DECIMAL(10,2),
-    transaction_date DATE NOT NULL,
-    store_id UUID,
-    customer_type VARCHAR(20),
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Inventory Tracking
-CREATE TABLE inventory_snapshots (
-    id UUID PRIMARY KEY,
-    product_id UUID REFERENCES products(id),
-    quantity_on_hand INTEGER,
-    quantity_reserved INTEGER,
-    quantity_available INTEGER,
-    snapshot_date TIMESTAMP DEFAULT NOW(),
-    store_id UUID
-);
-
--- AI Copilot Conversations
-CREATE TABLE copilot_conversations (
-    id UUID PRIMARY KEY,
-    user_id UUID REFERENCES users(id),
-    session_id VARCHAR(100),
-    message_type VARCHAR(20), -- 'user' or 'assistant'
-    message_content TEXT,
-    context_data JSONB,
-    confidence_score DECIMAL(3,2),
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Indexes for Performance
-CREATE INDEX idx_sales_product_date ON sales_transactions(product_id, transaction_date);
-CREATE INDEX idx_inventory_product_date ON inventory_snapshots(product_id, snapshot_date);
-CREATE INDEX idx_copilot_session ON copilot_conversations(session_id, created_at);
+```mermaid
+erDiagram
+    TENANTS ||--o{ USERS : has
+    TENANTS ||--o{ STORES : owns
+    TENANTS ||--o{ SUBSCRIPTIONS : maintains
+    STORES ||--o{ PRODUCTS : contains
+    STORES ||--o{ INVENTORY_SNAPSHOTS : tracks
+    STORES ||--o{ SALES_TRANSACTIONS : generates
+    PRODUCTS ||--o{ PRICING_HISTORY : has
+    PRODUCTS ||--o{ FORECASTS : predicts
+    PRODUCTS ||--o{ RECOMMENDATIONS : receives
+    USERS ||--o{ COPILOT_CONVERSATIONS : has
+    COPILOT_CONVERSATIONS ||--o{ CONVERSATION_MESSAGES : contains
+    USERS ||--o{ USER_PREFERENCES : configures
+    PRODUCTS ||--o{ PRODUCT_ATTRIBUTES : describes
+    STORES ||--o{ SUPPLIERS : works_with
+    SUPPLIERS ||--o{ PURCHASE_ORDERS : creates
+    PURCHASE_ORDERS ||--o{ ORDER_ITEMS : contains
+    
+    TENANTS {
+        uuid id PK
+        string name
+        string domain
+        string plan_type
+        jsonb settings
+        jsonb billing_info
+        timestamp created_at
+        timestamp updated_at
+        boolean active
+        string timezone
+        jsonb compliance_settings
+    }
+    
+    USERS {
+        uuid id PK
+        uuid tenant_id FK
+        string email UK
+        string name
+        string phone
+        jsonb roles
+        string last_login_ip
+        timestamp last_login_at
+        boolean mfa_enabled
+        jsonb preferences
+        timestamp created_at
+        timestamp updated_at
+        boolean active
+    }
+    
+    STORES {
+        uuid id PK
+        uuid tenant_id FK
+        string name
+        string address
+        string city
+        string state
+        string country
+        string postal_code
+        string timezone
+        jsonb settings
+        string currency
+        decimal latitude
+        decimal longitude
+        timestamp created_at
+        timestamp updated_at
+        boolean active
+    }
+    
+    PRODUCTS {
+        uuid id PK
+        uuid tenant_id FK
+        string sku UK
+        string barcode
+        string name
+        string description
+        string category
+        string brand
+        string supplier
+        decimal cost
+        decimal price
+        decimal weight
+        decimal dimensions
+        jsonb attributes
+        string image_url
+        boolean active
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    SALES_TRANSACTIONS {
+        uuid id PK
+        uuid tenant_id FK
+        uuid store_id FK
+        uuid product_id FK
+        integer quantity
+        decimal unit_price
+        decimal total_amount
+        decimal tax_amount
+        string payment_method
+        string customer_type
+        string transaction_id
+        date transaction_date
+        timestamp created_at
+        jsonb metadata
+    }
+    
+    INVENTORY_SNAPSHOTS {
+        uuid id PK
+        uuid tenant_id FK
+        uuid store_id FK
+        uuid product_id FK
+        integer quantity_on_hand
+        integer quantity_reserved
+        integer quantity_available
+        integer reorder_point
+        integer safety_stock
+        decimal unit_cost
+        timestamp snapshot_date
+        timestamp created_at
+    }
+    
+    COPILOT_CONVERSATIONS {
+        uuid id PK
+        uuid tenant_id FK
+        uuid user_id FK
+        string session_id
+        string status
+        jsonb context
+        decimal satisfaction_score
+        timestamp started_at
+        timestamp ended_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    CONVERSATION_MESSAGES {
+        uuid id PK
+        uuid conversation_id FK
+        string message_type
+        text message_content
+        jsonb context_data
+        decimal confidence_score
+        jsonb citations
+        integer token_count
+        timestamp created_at
+    }
+    
+    FORECASTS {
+        uuid id PK
+        uuid tenant_id FK
+        uuid product_id FK
+        uuid store_id FK
+        string forecast_type
+        date forecast_date
+        decimal predicted_quantity
+        decimal confidence_interval_lower
+        decimal confidence_interval_upper
+        string model_version
+        jsonb model_parameters
+        decimal accuracy_score
+        timestamp created_at
+        timestamp updated_at
+    }
 ```
 
 ### API Design Patterns
@@ -499,86 +853,166 @@ const optimizationStrategies = {
 
 ## 🚀 Deployment & Scalability
 
-### Infrastructure Architecture
+### Production Deployment Architecture
 
-```yaml
-# docker-compose.production.yml
-version: '3.8'
-services:
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/ssl
-    depends_on:
-      - api
-      - copilot
-
-  api:
-    build: ./backend
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - REDIS_URL=${REDIS_URL}
-    deploy:
-      replicas: 3
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
-
-  copilot:
-    build: ./copilot_chatbot
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - CHROMA_HOST=${CHROMA_HOST}
-    deploy:
-      replicas: 2
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 2G
-
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=smartshelf
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7-alpine
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-
-  chromadb:
-    build: ./vector_store
-    environment:
-      - CHROMA_SERVER_HOST=0.0.0.0
-    volumes:
-      - chroma_data:/chroma/chroma
-
-volumes:
-  postgres_data:
-  redis_data:
-  chroma_data:
+```mermaid
+graph TB
+    subgraph "Global Infrastructure"
+        A[Route 53 DNS]
+        B[Cloudflare CDN]
+        C[AWS Global Accelerator]
+    end
+    
+    subgraph "Primary Region - US East (N. Virginia)"
+        subgraph "VPC - 10.0.0.0/16"
+            subgraph "Public Subnets"
+                D[Application Load Balancer]
+                E[NAT Gateway]
+                F[Bastion Host]
+            end
+            
+            subgraph "Private Subnets - App Tier"
+                G[EKS Cluster - 3 AZs]
+                H[Kubernetes Pods]
+                I[Istio Service Mesh]
+            end
+            
+            subgraph "Private Subnets - Data Tier"
+                J[RDS PostgreSQL - Multi-AZ]
+                K[ElastiCache Redis]
+                L[DocumentDB]
+                M[OpenSearch Cluster]
+            end
+        end
+    end
+    
+    subgraph "Secondary Region - US West (Oregon)"
+        subgraph "VPC - 10.1.0.0/16"
+            N[Read Replica Database]
+            O[Backup EKS Cluster]
+            P[Disaster Recovery Storage]
+        end
+    end
+    
+    subgraph "Monitoring & Management"
+        Q[CloudWatch]
+        R[AWS X-Ray]
+        S[Prometheus]
+        T[Grafana]
+        U[Datadog]
+    end
+    
+    subgraph "Security & Compliance"
+        V[AWS WAF]
+        W[AWS Shield]
+        X[AWS Certificate Manager]
+        Y[AWS KMS]
+        Z[Security Hub]
+    end
+    
+    A --> B
+    B --> C
+    C --> D
+    D --> G
+    G --> H
+    H --> I
+    I --> J
+    I --> K
+    I --> L
+    I --> M
+    
+    J --> N
+    G --> O
+    M --> P
+    
+    G --> Q
+    G --> R
+    G --> S
+    G --> T
+    G --> U
+    
+    D --> V
+    D --> W
+    G --> X
+    J --> Y
+    G --> Z
 ```
 
-### Scaling Strategy
+### Production Monitoring & Observability Stack
 
-| Component | Horizontal Scaling | Vertical Scaling | Auto-scaling |
-|-----------|-------------------|------------------|--------------|
-| **Frontend** | CDN + Edge caching | N/A | Built-in |
-| **API Gateway** | Nginx load balancing | More CPU/RAM | Yes |
-| **Backend API** | Stateless containers | More resources | Yes |
-| **AI Copilot** | Multiple instances | GPU enabled | Yes |
-| **Database** | Read replicas | More storage | Manual |
-| **Vector Store** | Sharding | More RAM | Yes |
+```mermaid
+graph TB
+    subgraph "Data Collection Layer"
+        A[Application Metrics]
+        B[Infrastructure Metrics]
+        C[Business Metrics]
+        D[Log Aggregation]
+        E[Trace Collection]
+        F[Security Events]
+    end
+    
+    subgraph "Processing & Storage"
+        G[Prometheus Server]
+        H[Prometheus HA Cluster]
+        I[Elasticsearch Cluster]
+        J[Jaeger Collector]
+        K[CloudWatch Logs]
+        L[Security Hub]
+    end
+    
+    subgraph "Visualization & Alerting"
+        M[Grafana Dashboards]
+        N[Kibana Analytics]
+        O[Jaeger UI]
+        P[AlertManager]
+        Q[PagerDuty]
+        R[Slack Notifications]
+    end
+    
+    subgraph "AI-Powered Monitoring"
+        S[Anomaly Detection]
+        T[Predictive Alerting]
+        U[Auto-Remediation]
+        V[Capacity Planning]
+    end
+    
+    subgraph "Compliance & Audit"
+        W[Audit Trail]
+        X[Compliance Reporting]
+        Y[Security Posture]
+        Z[Cost Optimization]
+    end
+    
+    A --> G
+    B --> G
+    C --> G
+    A --> H
+    B --> H
+    C --> H
+    
+    D --> I
+    E --> J
+    F --> L
+    
+    G --> M
+    H --> M
+    I --> N
+    J --> O
+    G --> P
+    P --> Q
+    P --> R
+    
+    G --> S
+    H --> S
+    S --> T
+    T --> U
+    U --> V
+    
+    L --> W
+    W --> X
+    X --> Y
+    Y --> Z
+```
 
 ---
 
@@ -716,40 +1150,91 @@ graph LR
 
 ---
 
-## 🛡️ Security & Compliance
+### Production Security Architecture
 
-### Security Architecture
-
-```
-Security Layers
-┌─────────────────────────────────────────────────────────────┐
-│                    Application Security                      │
-│  • Input validation & sanitization                          │
-│  • SQL injection prevention                                 │
-│  • XSS protection                                           │
-│  • CSRF tokens                                              │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                    Network Security                          │
-│  • SSL/TLS encryption                                        │
-│  • DDoS protection                                          │
-│  • Rate limiting                                             │
-│  • IP whitelisting                                          │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                    Data Security                             │
-│  • Encryption at rest (AES-256)                             │
-│  • Encryption in transit (TLS 1.3)                          │
-│  • Data anonymization                                        │
-│  • Secure key management                                    │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                    Identity & Access                         │
-│  • Multi-factor authentication                              │
-│  • Role-based access control                                │
-│  • OAuth 2.0 integration                                    │
-│  • Session management                                       │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "Network Security Layer"
+        A[Cloudflare WAF]
+        B[AWS Shield Advanced]
+        C[VPC with Security Groups]
+        D[Network ACLs]
+        E[Private Link Endpoints]
+    end
+    
+    subgraph "Application Security"
+        F[OAuth 2.0 + OIDC]
+        G[JWT Token Validation]
+        H[Role-Based Access Control]
+        I[API Rate Limiting]
+        J[Input Validation & Sanitization]
+        K[CORS Protection]
+    end
+    
+    subgraph "Data Protection"
+        L[AES-256 Encryption at Rest]
+        M[TLS 1.3 Encryption in Transit]
+        N[AWS KMS Key Management]
+        O[Data Masking & Tokenization]
+        P[PII Data Classification]
+        Q[Data Loss Prevention]
+    end
+    
+    subgraph "Identity & Access Management"
+        R[AWS IAM Roles]
+        S[Multi-Factor Authentication]
+        T[Privileged Access Management]
+        U[Session Management]
+        V[Audit Logging]
+    end
+    
+    subgraph "Compliance & Governance"
+        W[SOC 2 Type II Controls]
+        X[GDPR Compliance]
+        Y[CCPA Compliance]
+        Z[PCI DSS Validation]
+        AA[HIPAA Compliance]
+    end
+    
+    subgraph "Threat Detection & Response"
+        BB[Security Information & Event Management]
+        CC[Intrusion Detection System]
+        DD[Vulnerability Management]
+        EE[Penetration Testing]
+        FF[Incident Response]
+    end
+    
+    A --> C
+    B --> C
+    C --> D
+    D --> E
+    
+    F --> G
+    G --> H
+    H --> I
+    I --> J
+    J --> K
+    
+    L --> M
+    M --> N
+    N --> O
+    O --> P
+    P --> Q
+    
+    R --> S
+    S --> T
+    T --> U
+    U --> V
+    
+    W --> X
+    X --> Y
+    Y --> Z
+    Z --> AA
+    
+    BB --> CC
+    CC --> DD
+    DD --> EE
+    EE --> FF
 ```
 
 ### Compliance Framework
