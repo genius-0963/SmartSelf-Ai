@@ -28,3 +28,4 @@ data/vector_store/
 .vscode/
 *.swp
 *.swo
+.env
